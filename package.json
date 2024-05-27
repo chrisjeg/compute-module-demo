@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsc"
   },
-  "author": "",
+  "author": "Christopher Jeganathan",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.17"
