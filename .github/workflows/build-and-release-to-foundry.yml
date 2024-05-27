@@ -4,7 +4,7 @@ on:
   release:
     types: [published]
 env:
-  IMAGE_NAME: typescript-compute-module
+  IMAGE_NAME: compute-module-demo
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
