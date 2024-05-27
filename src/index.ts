@@ -1,7 +1,7 @@
 import { ComputeModule } from "@chrisjeg/compute-module";
 import { Type } from "@sinclair/typebox";
 
-const module = new ComputeModule({
+const computeModule = new ComputeModule({
   logger: console,
   definitions: {
     currentDate: {
@@ -16,7 +16,7 @@ const module = new ComputeModule({
   },
 });
 
-module.register("currentDate", async (input) => {
+computeModule.register("currentDate", async (input) => {
   return {
     foo: input.foo,
     currentDate: new Date().toISOString(),
