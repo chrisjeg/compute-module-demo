@@ -3,7 +3,8 @@
     "module": "Node16",
     "target": "ES6",
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "lib": ["es2018"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
