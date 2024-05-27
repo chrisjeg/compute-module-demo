@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "ES6",
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

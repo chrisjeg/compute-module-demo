@@ -1,0 +1,71 @@
+name: Build and Release to Foundry
+
+on:
+  release:
+    types: [published]
+env:
+  IMAGE_NAME: typescript-compute-module
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Foundry token
+        id: foundry-token
+        uses: chrisjeg/auth-to-foundry@v1
+        with:
+          foundry-url: ${{ secrets.FOUNDRY_INSTANCE }}
+          client-id: ${{ secrets.FOUNDRY_CLIENT_ID }}
+          client-secret: ${{ secrets.FOUNDRY_CLIENT_SECRET }}
+          scope: "compass:edit"
+
+      - name: Get container registry url
+        id: get-container-registry
+        uses: chrisjeg/get-foundry-registry-action@v1
+        with:
+          foundry-url: ${{ secrets.FOUNDRY_INSTANCE }}
+          access-token: ${{ steps.foundry-token.outputs.access-token }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Foundry Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ steps.get-container-registry.outputs.foundry-container-registry-url }}
+          username: ${{ vars.artifacts_rid }}
+          password: ${{ steps.foundry-token.outputs.access-token }}
+
+      # I get 415 when trying to hit Foundry using the build-push-action
+      - name: Build and push Docker image
+        id: docker_build
+        run: |
+          docker build --build-arg DOCKER_TAG=${{ github.event.release.tag_name }} --platform linux/amd64 -t ${{ steps.get-container-registry.outputs.foundry-container-registry-url }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }} . --load
+          docker push ${{ steps.get-container-registry.outputs.foundry-container-registry-url }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}
+
+      - name: Upgrade compute module
+        id: upgrade-compute-module
+        uses: chrisjeg/upgrade-compute-module@main
+        with:
+          foundry-url: ${{ secrets.FOUNDRY_INSTANCE }}
+          access-token: ${{ steps.foundry-token.outputs.access-token }}
+          compute-module-rid: ${{ vars.compute_module_rid }}
+          container-name: ${{ vars.container_name }}
+          container-tag: ${{ github.event.release.tag_name }}
+
+  update-release-notes:
+    runs-on: ubuntu-latest
+    needs: build-and-release
+    permissions:
+      contents: write
+    steps:
+      - name: Update release description with Docker image link
+        id: update-release
+        run: |
+          IMAGE_URL="https://${{ secrets.FOUNDRY_INSTANCE }}/workspace/artifacts/${{ vars.ARTIFACTS_RID }}/search?layout=docker&selected=DOCKER~~${{ env.IMAGE_NAME }}&tag=${{ github.event.release.tag_name }}"
+          RELEASE_DESCRIPTION="[![View in Foundry](https://img.shields.io/badge/View_in-Palantir_Foundry-blue)]($IMAGE_URL)\n\n${{ github.event.release.body }}"
+          printf "%b" "$RELEASE_DESCRIPTION" > temp_release_description.txt
+          gh api -X PATCH /repos/${{ github.repository }}/releases/${{ github.event.release.id }} -F body=@temp_release_description.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
