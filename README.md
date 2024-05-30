@@ -38,7 +38,7 @@ To run the code you can run `node dist/index.js`. This will throw as you are not
 
 Our Dockerfile describes the steps above to Docker, so that we can ship the code to run inside Foundry. To start, create an Artifacts repository and navigate to Push > Docker.
 
-Follow the steps on this page, giving your container a unique name that you want it to be identified as in Foundry. You can keep the tag as `latest` or choose some meaningful version.
+Follow the steps on this page, giving your container a unique name that you want it to be identified as in Foundry. A good starting tag is `0.0.1` to start tracking your tags with [semantic versioning](https://semver.org/).
 
 Once your code is in an Artifacts repository, you can create a new Compute Module and add that container to the module, give that container a unique name so we can find it later. Hit start and you should be able to try the function. The query that ships with this example would be called:
 
@@ -59,7 +59,7 @@ The following parameters need to be added to your GitHub repository:
 
 - Secrets
   - FOUNDRY_INSTANCE: The URL of your Foundry instance (e.g. `my-foundry.com`)
-  - FOUNDRY_CLIENT_ID: The ID of your Third Party Application
+  - FOUNDRY_CLIENT_ID: The ID of your Third Party Application (3PA)
   - FOUNDRY_CLIENT_SECRET: The secret from your 3PA
 - Variables
   - artifacts_rid: The resource identifier of the Artifacts repository you created.
