@@ -28,7 +28,7 @@ GitHub files (Used to set up CI/CD)
 
 ## 🔨 Developing and building your code locally
 
-To start working locally, you should run `npm install` to install the dependencies described in `package.json`.
+To start working locally, go to your terminal and run `npm install` in the compute-module-demo directory to install the dependencies described in `package.json`.
 
 After iterating on the code, running `npm run build` will create the JavaScript files that Node.JS will execute in `/dist`.
 
