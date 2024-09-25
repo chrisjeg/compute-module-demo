@@ -1,6 +1,6 @@
-﻿# compute-module-demo
+﻿# compute-module-demo (Pipelines)
 
-This is an example of a Compute Module using Typescript that can be built locally and pushed to Foundry, if Compute Modules are enabled for your Foundry installation. You can start by downloading this repository as a zip!
+This is an example of a Pipelines Compute Module using Typescript that can be built locally and pushed to Foundry, if Compute Modules are enabled for your Foundry installation. You can start by downloading this repository as a zip!
 
 ## Prerequisites
 
@@ -12,10 +12,10 @@ I recommend installing [Node.JS using NVM](https://github.com/nvm-sh/nvm)
 
 ## Navigating this repository
 
-The files in this repository show the minimum set up needed for a Compute Module written in TypeScript, we leverage my NPM library [@chrisjeg/compute-module](https://github.com/chrisjeg/typescript-compute-module) to manage interfacing with the Compute Module API. The code is open-source, feel free to check out how the interface is implemented.
+The files in this repository show the minimum set up needed for a Pipelines Compute Module written in TypeScript, we leverage Palantir's NPM library [@palantir/compute-module](https://github.com/palantir/typescript-compute-module) to manage interfacing with the Compute Module API. The code is open-source, feel free to check out how the interface is implemented.
 
 TypeScript files (Used for writing our logic)
-- `src/index.ts` - Any logic you want to author will be found in here, we currently have a simple query that takes a string and returns it alongside the current date.
+- `src/index.ts` - Any logic you want to author will be found in here, in this example we hit the UK Department For Transport API and stream the 
 - `package.json` - The dependencies of our TypeScript code. `package-lock.json` ensures we get the same dependencies every time we build.
 - `tsconfig.json` - Compiler options for TypeScript to compile our code, this lets the compiler know we are going to be writing code to execute in Node.JS.
 
@@ -40,16 +40,13 @@ Our Dockerfile describes the steps above to Docker, so that we can ship the code
 
 Follow the steps on this page, giving your container a unique name that you want it to be identified as in Foundry. A good starting tag is `0.0.1` to start tracking your tags with [semantic versioning](https://semver.org/).
 
-Once your code is in an Artifacts repository, you can create a new Compute Module and add that container to the module, give that container a unique name so we can find it later. Hit start and you should be able to try the function. The query that ships with this example would be called:
+Once your code is in an Artifacts repository, you can create a new Compute Module and add that container to the module, give that container a unique name so we can find it later. You will need to add a streaming dataset as an output, you can create a streaming dataset by selecting New > Stream in the same project as your code. You can generate the schema by pasting in this JSON sample:
 
-Query name: `currentDate`
-
-Query JSON:
 ```json
-{
-  "foo": "bar"
-}
+{"LineRef":"106","DirectionRef":"outbound","FramedVehicleJourneyRef":{"DataFrameRef":"2024-09-25","DatedVehicleJourneyRef":"1000"},"PublishedLineName":"106","OperatorRef":"A2BV","OriginRef":"2800S24007B","OriginName":"Monk_Road","DestinationRef":"2800S24003E","DestinationName":"Dominick_House","OriginAimedDepartureTime":"2024-09-25T09:00:00+00:00","DestinationAimedArrivalTime":"2024-09-25T09:42:00+00:00","VehicleLocation":{"Longitude":"-3.032225","Latitude":"53.424053"},"Bearing":"309","BlockRef":"8","VehicleRef":"REF","RecordedAtTime":"2024-09-25T09:03:28+00:00","ConsumedTime":1727255039640}
 ```
+
+You will also need to add a source with api key "DftApi" and secret name "ApiKey" which provides egress to "https://data.bus-data.dft.gov.uk" added to the Compute Module.
 
 ## 🔁 Continuously deploy using GitHub Actions
 
