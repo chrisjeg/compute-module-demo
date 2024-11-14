@@ -1,5 +1,5 @@
 import { parseStringPromise } from "xml2js";
-import { ComputeModule } from "@palantir/compute-module";
+import { ComputeModule, FoundryService } from "@palantir/compute-module";
 
 const BOUNDING_BOX = process.env.BOUNDING_BOX || "-2.93,53.374,-3.085,53.453";
 const RELOAD_MS = 10_000;
@@ -8,17 +8,17 @@ const RELOAD_MS = 10_000;
     const computeModule = new ComputeModule({
         logger: console
     });    
-    const environment = await computeModule.getEnvironment();
-    if (environment.type !== "pipelines") {
+    if (computeModule.environment.type !== "pipelines") {
         throw new Error("Should be pipelines mode")
     }
-    const apiKey = await computeModule.getCredential("DftApi", "ApiKey");
+    const token = computeModule.environment.buildToken;
+    const apiKey = computeModule.getCredential("DftApi", "ApiKey");
     if (apiKey == null) {
         throw new Error("API Key missing")
     }
     executeNowAndOnInterval(async ()=>{
         const vehicleActivity = await fetchVehicleActivityForBoundingBox(apiKey, BOUNDING_BOX);
-        pushRowsToFoundryStream(environment.services.stream_proxy,vehicleActivity, environment.buildToken)
+        pushRowsToFoundryStream(computeModule.getServiceApi[FoundryService.STREAM_PROXY],vehicleActivity, token);
     }, RELOAD_MS)
 })();
 
