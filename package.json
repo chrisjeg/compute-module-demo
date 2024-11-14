@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@chrisjeg/compute-module": "0.3.4",
+    "@palantir/compute-module": "^0.2.6",
     "@sinclair/typebox": "^0.32.31",
-    "axios": "^1.6.7",
     "typescript": "^5.3.3"
   },
   "scripts": {

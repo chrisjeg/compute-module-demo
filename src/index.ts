@@ -1,4 +1,4 @@
-import { ComputeModule } from "@chrisjeg/compute-module";
+import { ComputeModule } from "@palantir/compute-module";
 import { Type } from "@sinclair/typebox";
 
 const computeModule = new ComputeModule({
