@@ -6,14 +6,12 @@
   "dependencies": {
     "@palantir/compute-module": "^0.2.6",
     "@sinclair/typebox": "^0.32.31",
+    "@types/node": "^20.11.17",
     "typescript": "^5.3.3"
   },
   "scripts": {
     "build": "tsc"
   },
   "author": "Christopher Jeganathan",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.11.17"
-  }
+  "license": "MIT"
 }
